@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>자주하는 질문 목록</title>
+
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/faq.css">
+    <style>
+      .faq_a {
+        display: none;
+      }
+      .faq_item.open .faq_a {
+        display: block;
+      }
+    </style>
+</head>
+<body>
+    <!-- 헤더/푸터 영역 -->
+    <script>
+        fetch("../../main/header.html")
+          .then(res => res.text())
+          .then(data => {
+            document.getElementById("header").innerHTML = data;
+
+            // header script 강제 실행
+            const scripts = document.getElementById("header").querySelectorAll("script");
+            scripts.forEach(oldScript => {
+              const newScript = document.createElement("script");
+              if (oldScript.src) newScript.src = oldScript.src;
+              else newScript.textContent = oldScript.textContent;
+              document.body.appendChild(newScript);
+            });
+          });
+
+        fetch("../../main/footer.html")
+          .then(res => res.text())
+          .then(data => {
+            document.getElementById("footer").innerHTML = data;
+          });
+    </script>
+
+    <div id="header"></div>
+
+    <div id="content" class="cs_faq_list_wrap">
+        <h1>FAQ</h1>
+        <div class="cs_sub_nav">
+            <ul>
+                <li class="on"><a href="view.html?category=회원">회원</a></li>
+                <li><a href="view.html?category=쿠폰/이벤트">쿠폰/이벤트</a></li>
+                <li><a href="view.html?category=주문/결제">주문/결제</a></li>
+                <li><a href="view.html?category=배송">배송</a></li>
+                <li><a href="view.html?category=취소/반품/교환">취소/반품/교환</a></li>
+                <li><a href="view.html?category=여행/숙박/항공">여행/숙박/항공</a></li>
+                <li><a href="view.html?category=안전거래">안전거래</a></li>
+            </ul>
+        </div>
+
+        <div class="faq_list_area" id="faq-list">
+            <!-- 자바스크립트로 채워짐 -->
+        </div>
+
+        <div class="btn_area">
+            <button class="btn_more" id="btn-more">더보기</button>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <!-- 더보기 스크립트 -->
+    <script>
+      const faqData = [
+        {
+          q: "개인회원과 법인회원 차이가 있나요?",
+          a: "개인회원은 일반 사용자이며, 법인회원은 사업자 등록이 필요합니다."
+        },
+        {
+          q: "회원 탈퇴 후 재가입이 가능한가요?",
+          a: "탈퇴 후 30일간은 재가입이 제한됩니다."
+        },
+        {
+          q: "비밀번호를 잊었어요.",
+          a: "로그인 페이지의 비밀번호 찾기를 이용해 주세요."
+        },
+        {
+          q: "회원정보 수정은 어떻게 하나요?",
+          a: "마이페이지 > 회원정보 수정에서 변경 가능합니다."
+        },
+        {
+          q: "이메일 변경은 가능한가요?",
+          a: "이메일은 본인 인증 후 변경 가능합니다."
+        }
+      ];
+
+      let shownCount = 0;
+      const perPage = 2;
+      const faqList = document.getElementById("faq-list");
+      const btnMore = document.getElementById("btn-more");
+
+      function renderMore() {
+        const fragment = document.createDocumentFragment();
+
+        for (let i = shownCount; i < Math.min(shownCount + perPage, faqData.length); i++) {
+          const item = faqData[i];
+
+          const div = document.createElement("div");
+          div.className = "faq_item";
+
+          const btn = document.createElement("button");
+          btn.className = "faq_q";
+          btn.textContent = item.q;
+          btn.onclick = () => div.classList.toggle("open");
+
+          const ans = document.createElement("div");
+          ans.className = "faq_a";
+          ans.innerHTML = `<p>${item.a}</p>`;
+
+          div.appendChild(btn);
+          div.appendChild(ans);
+          fragment.appendChild(div);
+        }
+
+        faqList.appendChild(fragment);
+        shownCount += perPage;
+
+        if (shownCount >= faqData.length) {
+          btnMore.style.display = "none";
+        }
+      }
+
+      btnMore.addEventListener("click", renderMore);
+      renderMore(); // 첫 로딩 시 2개 보여줌
+    </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 목록</title>
+
+    <link rel="stylesheet" href="../css/common.css">
+    
+</head>
+<body>
+<!--헤더푸터 연결-->
+    <script>
+        fetch("../../main/header.html")
+          .then(res => res.text())
+          .then(data => {
+            document.getElementById("header").innerHTML = data;
+
+            // header.html 안의 스크립트 실행 강제
+            const scripts = document.getElementById("header").querySelectorAll("script");
+            scripts.forEach(oldScript => {
+            const newScript = document.createElement("script");
+            if (oldScript.src) {
+                newScript.src = oldScript.src;
+            } else {
+                newScript.textContent = oldScript.textContent;
+            }
+            document.body.appendChild(newScript);
+            });
+          });
+
+       
+        fetch("../../main/footer.html")
+          .then(res => res.text())
+          .then(data => {
+            document.getElementById("footer").innerHTML = data;
+          });
+    </script>
+    <div id="header"></div>
+
+    <div id="content" class="cs_notice_list_wrap">
+        <h1>NOTICE</h1>
+        <div class="cs_sub_nav">
+            <ul>
+                <li class="on"><a href="#">전체</a></li>
+                <li><a href="#">고객서비스</a></li>
+                <li><a href="#">안전거래</a></li>
+                <li><a href="#">위해상품</a></li>
+                <li><a href="#">이벤트당첨</a></li>
+            </ul>
+        </div>
+        <div class="cs_list_table">
+            <p class="total_count">총 <span class="count">256</span>건</p>
+            <table>
+                <colgroup>
+                    <col style="width: 15%;">
+                    <col style="width: auto;">
+                    <col style="width: 20%;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>분류</th>
+                        <th>제목</th>
+                        <th>등록일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>[안내]</td>
+                        <td class="title"><a href="view.html">해외결제사 정기점검주의</a></td>
+                        <td>22.10.31</td>
+                    </tr>
+                    <tr>
+                        <td>[안내]</td>
+                        <td class="title"><a href="view.html">해외결제사 정기점검주의</a></td>
+                        <td>22.10.31</td>
+                    </tr>
+                    <tr>
+                        <td>[안내]</td>
+                        <td class="title"><a href="view.html">해외결제사 정기점검주의</a></td>
+                        <td>22.10.31</td>
+                    </tr>
+                    <tr>
+                        <td>[안내]</td>
+                        <td class="title"><a href="view.html">해외결제사 정기점검주의</a></td>
+                        <td>22.10.31</td>
+                    </tr>
+                    <tr>
+                        <td>[안내]</td>
+                        <td class="title"><a href="view.html">해외결제사 정기점검주의</a></td>
+                        <td>22.10.31</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style=" height: 100px; margin-top:40px; display: flex; justify-content: center;">
+            <form action="" method="" style="">
+                <div style="display: flex;">
+                    <div style="">
+                        <input type="button" class="prev-page" value="< 이전" style="border:1px solid #ddd;">
+                    </div>
+                    <div style="">
+                        <input type="button" value="1" style="border:1px solid #333; background-color: #333; color: white; height: 30px; width: 30px; margin-right:2px; line-height:1;">
+                        <input type="button" value="2" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; margin-right:2px; line-height:1;">
+                        <input type="button" value="3" style="cursor: pointer; border:1px solid #ddd; color: #555; height: 30px; width: 30px; line-height:1;">
+                    </div>
+                    <div>
+                        <input type="button" class="next-page" value="다음 >" style="border:1px solid #ddd;">
+                    </div>
+                </div>
+            </form>
+            <style>
+                /* 페이지네이션 */
+                /* 게시판 아래버튼 부분 */
+                .prev-page{
+                    border: none;
+                    margin-right: 15px;
+                    width: 50px;
+                    height: 30px;
+                    cursor: pointer;
+                }
+                .next-page{
+                    border: none;
+                    margin-left: 15px;
+                    width: 50px;
+                    height: 30px;
+                    margin-right:3px;
+                    cursor: pointer;
+                }
+                
+                /* 게시판 아래버튼 부분 끝 */
+            </style>
+        </div>
+    </div>
+<div id="footer"></div>
+</body>
+</html>
