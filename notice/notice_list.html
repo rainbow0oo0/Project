@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 목록</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+</head>
+<body>
+<header th:replace="~{main/header :: header}"></header>
+
+<!-- 왼쪽 패널 -->
+<aside id="menuOverlay" class="overlay" aria-hidden="true">
+    <div class="overlay__panel">
+        <div class="overlay__top"  style="margin-top:20px;">
+            <button id="closeBtn" class="overlay__close" aria-label="메뉴 닫기"></button>
+            <div style="font-size:72px; font-weight:800; letter-spacing:-10px; "class="title-didone">NICHIYA</div>
+        </div>
+
+        <div style="display: flex; margin-left:20%; margin-top:1%; width:100%;">
+            <nav class="overlay__menu" style="width:100%;">
+                <div style="">
+                    <div>
+                        <a th:href="@{/cs/notice/list}" class="nav-current"><b>공지사항</b></a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/faq/list}">자주묻는질문</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/qna/list}">QnA</a>
+                    </div>
+                    <br>
+                    <div>
+                        <a th:href="@{/cs/notice/list}">전체</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
+                    </div>
+                    <div>
+                        <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
+                    </div>
+                </div>
+                <div style=""></div>
+            </nav>
+        </div>
+    </div>
+</aside>
+
+<div class="cs_notice_wrap">
+    <h1 style="margin-bottom: 20px">NOTICE</h1>
+    <div class="cs_sub_nav" style="border-bottom: none">
+        <ul>
+            <li th:classappend="${boardType == null or boardType == '' or boardType == '전체'} ? 'on'">
+                <a th:href="@{/cs/notice/list}">전체</a>
+            </li>
+            <li th:classappend="${boardType == '서비스'} ? 'on'">
+                <a th:href="@{/cs/notice/list(boardType='서비스')}">고객서비스</a>
+            </li>
+            <li th:classappend="${boardType == '안전거래'} ? 'on'">
+                <a th:href="@{/cs/notice/list(boardType='안전거래')}">안전거래</a>
+            </li>
+            <li th:classappend="${boardType == '판매중지'} ? 'on'">
+                <a th:href="@{/cs/notice/list(boardType='판매중지')}">위해상품</a>
+            </li>
+            <li th:classappend="${boardType == '당첨자'} ? 'on'">
+                <a th:href="@{/cs/notice/list(boardType='당첨자')}">이벤트당첨</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="cs_list_table">
+        <h2 style="font-size:23px; font-weight:bold; margin: 0;"
+            th:switch="${boardType}">
+            <span th:case="'서비스'">고객서비스</span>
+            <span th:case="'안전거래'">안전거래</span>
+            <span th:case="'판매중지'">위해상품</span>
+            <span th:case="'당첨자'">이벤트당첨</span>
+            <span th:case="*">전체</span>
+        </h2>
+        <p class="total_count" style="margin-top: 2px;">
+            총 <span class="count" th:text="${totalCount}"></span>건
+        </p>
+
+        <table style="border-top: 2px solid #ddd">
+            <colgroup>
+                <col style="width: auto;">
+                <col style="width: 25%;">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>제목</th>
+                <th>등록일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="n : ${dtoPage}">
+                <td>
+                    <a th:href="@{/cs/notice/view/{id}(id=${n.id}, boardType=${boardType})}" th:text="${n.title}"></a>
+                </td>
+                <td th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination"
+             th:with="
+                    start=${T(java.lang.Math).floor(currentPage / 10) * 10},
+                    end=${(start + 9) < (totalPages - 1) ? (start + 9) : (totalPages - 1)}">
+
+            <!-- 이전 버튼 -->
+            <a th:href="@{/cs/notice/list(
+                        page=${currentPage > 0 ? currentPage - 1 : 0},
+                        boardType=${boardType})}">이전
+            </a>
+
+            <!-- 페이지 번호 10개씩 출력 -->
+            <span th:each="i : ${#numbers.sequence(start, end)}">
+                <a th:href="@{/cs/notice/list(page=${i}, boardType=${boardType})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == currentPage} ? 'on'"></a>
+            </span>
+
+            <!-- 다음 버튼 -->
+            <a th:href="@{/cs/notice/list(
+                        page=${currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1},
+                        boardType=${boardType})}">다음
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 요소 가져오기 ---
+    const body     = document.body;
+    const menuBtn  = document.getElementById('menuBtn');   // 왼쪽 상단 버튼
+    const closeBtn = document.getElementById('closeBtn');  // X 버튼
+    const overlay  = document.getElementById('menuOverlay'); // 전체 오버레이
+
+    // --- 메뉴 열기 ---
+    function openMenu(){
+        overlay.classList.add('open');  // CSS .open 적용 → 왼쪽에서 패널 슬라이드
+        overlay.setAttribute('aria-hidden', 'false');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        body.style.overflow = 'hidden'; // 배경 스크롤 막음
+    }
+
+    // --- 메뉴 닫기 ---
+    function closeMenu(){
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        body.style.overflow = ''; // 스크롤 다시 가능
+    }
+
+    // --- 이벤트 연결 ---
+    if(menuBtn && closeBtn && overlay){
+        menuBtn.addEventListener('click', openMenu); // 버튼 클릭 시 열기
+        closeBtn.addEventListener('click', closeMenu); // X 버튼 클릭 시 닫기
+
+        // 배경 클릭 시 닫기
+        overlay.addEventListener('click', (e) => {
+            if(e.target === overlay) closeMenu();
+        });
+
+        // ESC 키 눌렀을 때 닫기
+        window.addEventListener('keydown', (e)=>{
+            if(e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
+        });
+    }
+</script>
+
+<script>
+    // --- 왼쪽 카테고리 클릭 시 오른쪽 패널 열기 ---
+    const menuLinks = document.querySelectorAll('.overlay__menu a[data-cat]');
+    const panels    = document.querySelectorAll('#subcol .panel');
+
+    menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // 1. 모든 패널 숨기기
+            panels.forEach(p => p.classList.remove('show'));
+
+            // 2. 클릭한 카테고리 가져오기
+            const key = link.getAttribute('data-cat');
+            const panel = document.querySelector(`#subcol .panel[data-key="${key}"]`);
+
+            // 3. 해당 패널만 보이기
+            if (panel) {
+                panel.classList.add('show');
+            }
+
+            // 4. 왼쪽 메뉴 active 처리 (선택사항)
+            menuLinks.forEach(l => l.classList.remove('is-active'));
+            link.classList.add('is-active');
+        });
+    });
+    (function () {
+        // 현재 경로에서 컨텍스트 경로 추출 (예: /NICHIYA/... -> /NICHIYA/)
+        var path = window.location.pathname;               // 예: "/NICHIYA/main/main/page"
+        var segs = path.split('/').filter(Boolean);        // ["NICHIYA","main","main","page"]
+        var ctx = segs.length ? ('/' + segs[0] + '/') : '/'; // "/NICHIYA/" 또는 "/"
+
+        // favicon 절대경로 구성
+        var href = ctx + 'favicon.ico';
+
+        // 캐시 무효화(개발 중에만 유지)
+        var ver = Date.now();
+
+        // 기존 아이콘 링크 제거
+        document.head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]').forEach(function(n){ n.remove(); });
+
+        // 새 아이콘 링크 주입
+        var l1 = document.createElement('link');
+        l1.rel = 'icon';
+        l1.type = 'image/x-icon';
+        l1.href = href + '?v=' + ver;
+        document.head.appendChild(l1);
+
+        var l2 = document.createElement('link');
+        l2.rel = 'shortcut icon';
+        l2.type = 'image/x-icon';
+        l2.href = href + '?v=' + ver;
+        document.head.appendChild(l2);
+    })();
+
+    // 공유 title 조각
+    document.title = 'NICHIYA';
+</script>
+<div th:replace="~{main/footer :: footer}"></div>
+</body>
+</html>
