@@ -1,2 +1,2 @@
 # BNK_MarketProject
-BNK 2차 미니프로젝트
+BNK 2차 쇼핑몰 프로젝트
